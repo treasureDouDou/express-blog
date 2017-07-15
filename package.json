@@ -1,0 +1,30 @@
+{
+  "name": "express",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "nodemon index.js"
+  },
+  "dependencies": {
+    "body-parser": "~1.17.1",
+    "connect-history-api-fallback": "^1.3.0",
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.3",
+    "express": "~4.15.2",
+    "express-session": "^1.15.3",
+    "jade": "~1.11.0",
+    "jsonwebtoken": "^7.4.1",
+    "md5": "^2.2.1",
+    "mongoose": "^4.9.8",
+    "morgan": "~1.8.1",
+    "multer": "^1.3.0",
+    "serve-favicon": "~2.4.2"
+  },
+  "devDependencies": {
+    "babel-core": "^6.24.1",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-stage-3": "^6.24.1",
+    "moment": "^2.18.1"
+  }
+}
