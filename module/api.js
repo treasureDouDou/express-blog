@@ -218,10 +218,14 @@ router.post('/uploadImg', upload.single('img'), function(req, res) {
     res.json({ code: 200, url: 'http://localhost:3000/images/' + req.file.filename });
 });
 
-
+// const admin = { name: 'licheng', password: md5('longzhou520') }
+// userAdmin(admin).save()
     // 登录接口
 router.post('/login', async(req, res) => {
     try {
+        //var aaa = { name: 'licheng', password: md5('longzhou520') }
+        // await userAdmin.find().remove(0)
+        //await userAdmin(aaa).save()
         let name = req.body.name
         let password = req.body.password
         let data = await userAdmin.find({ name: name, password: md5(password) })
