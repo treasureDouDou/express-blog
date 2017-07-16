@@ -269,6 +269,7 @@ router.get('/getComment', async(req, res) => {
             let total = await comment.count()
             let data = await comment.find().sort({ date: -1 }).limit(pageSize).skip(skip).lean()
             let showViewArr = []
+            let resultShow = []
             for (let index = 0; index < data.length; index++) {
                 let date = moment(data[index].replyTime).format('YYYY-MM-DD HH:mm')
                 data[index].time = date
@@ -284,17 +285,24 @@ router.get('/getComment', async(req, res) => {
                 for (let i = 0; i < showViewArr.length; i++) {
                     showViewArr[i].childReply = []
                     for (let j = 0; j < showViewArr.length; j++) {
-                        if (showViewArr[i]._id == showViewArr[j].replyId) {
+                        if (showViewArr[i]._id == showViewArr[j].replyId && showViewArr[i]._id != showViewArr[j]._id) {
                             showViewArr[i].childReply.push(showViewArr[j])
                             spliceArr.push(j)
                         }
                     }
                 }
-                spliceArr.forEach(item => {
-                    showViewArr.splice(item, 1)
-                })
+                spliceArr = spliceArr.sort()
+                for( let i = 0 ; i < showViewArr.length; i++){
+                    let flag = true
+                    for(let j = 0; j < spliceArr.length; j++){
+                        if(i == spliceArr[j]) flag = false
+                    }
+                    if(flag){
+                        resultShow.push(showViewArr[i])
+                    }
+                }
             }
-            res.json({ data: { total: total, list: showView ? showViewArr : data }, code: 200, msg: '' })
+            res.json({ data: { total: total, list: showView ? resultShow : data }, code: 200, msg: '' })
         } catch (err) {
             console.log(err)
             res.json({ data: '', code: 500, msg: '服务器错误' })
