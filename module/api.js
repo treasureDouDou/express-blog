@@ -267,16 +267,13 @@ router.get('/getComment', async(req, res) => {
             let pageSize = parseInt(req.query.pageSize)
             let skip = parseInt((req.query.current - 1) * pageSize)
             let total = await comment.count()
-            let data = await comment.find().sort({ date: -1 }).limit(pageSize).skip(skip).lean()
+            let data = await comment.find().sort({ _id: -1 }).limit(pageSize).skip(skip).lean()
             let showViewArr = []
             let resultShow = []
             for (let index = 0; index < data.length; index++) {
                 let date = moment(data[index].replyTime).format('YYYY-MM-DD HH:mm')
                 data[index].time = date
             }
-            data = data.sort(function(a, b) {
-                return new Date(b.replyTime).getTime() - new Date(a.replyTime).getTime()
-            })
             if (showView) {
                 data.forEach(item => {
                     if (item.state) showViewArr.push(item)
