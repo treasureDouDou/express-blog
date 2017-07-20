@@ -219,7 +219,7 @@ router.post('/uploadImg', upload.single('img'), function(req, res) {
 });
 
 
-    // 登录接口
+// 登录接口
 router.post('/login', async(req, res) => {
     try {
         let name = req.body.name
@@ -248,10 +248,24 @@ router.post('/comment', async(req, res) => {
                 replyId: body.replyId,
                 toUserName: body.toUserName,
                 email: body.email,
-                replyTime: body.replyTime,
+                replyTime: '',
                 isAdmin: body.isAdmin,
                 content: body.content,
                 state: body.state
+            }
+            data.replyTime = () => {
+                let date = new Date(),
+                    year = date.getFullYear(),
+                    month = date.getMonth(),
+                    day = date.getDate(),
+                    hours = date.getHours(),
+                    min = date.getMinutes();
+                month = (month + 1) < 10 ? '0' + (month + 1) : (month + 1);
+                day = day < 10 ? '0' + day : day;
+                hours = hours < 10 ? '0' + hours : hours;
+                min = min < 10 ? '0' + min : min;
+                date = year + '-' + month + '-' + day + ' ' + hours + ':' + min;
+                return date
             }
             await new comment(data).save()
             res.json({ code: 200, msg: '等待评论审核', data: '' })
@@ -289,12 +303,12 @@ router.get('/getComment', async(req, res) => {
                     }
                 }
                 spliceArr = spliceArr.sort()
-                for( let i = 0 ; i < showViewArr.length; i++){
+                for (let i = 0; i < showViewArr.length; i++) {
                     let flag = true
-                    for(let j = 0; j < spliceArr.length; j++){
-                        if(i == spliceArr[j]) flag = false
+                    for (let j = 0; j < spliceArr.length; j++) {
+                        if (i == spliceArr[j]) flag = false
                     }
-                    if(flag){
+                    if (flag) {
                         resultShow.push(showViewArr[i])
                     }
                 }
