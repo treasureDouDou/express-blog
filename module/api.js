@@ -253,20 +253,19 @@ router.post('/comment', async(req, res) => {
                 content: body.content,
                 state: body.state
             }
-            data.replyTime = () => {
-                let date = new Date(),
-                    year = date.getFullYear(),
-                    month = date.getMonth(),
-                    day = date.getDate(),
-                    hours = date.getHours(),
-                    min = date.getMinutes();
-                month = (month + 1) < 10 ? '0' + (month + 1) : (month + 1);
-                day = day < 10 ? '0' + day : day;
-                hours = hours < 10 ? '0' + hours : hours;
-                min = min < 10 ? '0' + min : min;
-                date = year + '-' + month + '-' + day + ' ' + hours + ':' + min;
-                return date
-            }
+            let date = new Date(),
+                year = date.getFullYear(),
+                month = date.getMonth(),
+                day = date.getDate(),
+                hours = date.getHours(),
+                min = date.getMinutes();
+            month = (month + 1) < 10 ? '0' + (month + 1) : (month + 1);
+            day = day < 10 ? '0' + day : day;
+            hours = hours < 10 ? '0' + hours : hours;
+            min = min < 10 ? '0' + min : min;
+            date = year + '-' + month + '-' + day + ' ' + hours + ':' + min;
+            data.replyTime = date
+            console.log(data.replyTime)
             await new comment(data).save()
             res.json({ code: 200, msg: '等待评论审核', data: '' })
         } catch (err) {
