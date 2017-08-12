@@ -276,13 +276,14 @@ router.post('/comment', async(req, res) => {
     //前后台获取评论
 router.get('/getComment', async(req, res) => {
         try {
-            let showView = req.query.showView
-            let pageSize = parseInt(req.query.pageSize)
-            let skip = parseInt((req.query.current - 1) * pageSize)
-            let total = await comment.count()
-            let data = await comment.find().sort({ _id: -1 }).limit(pageSize).skip(skip).lean()
-            let showViewArr = []
-            let resultShow = []
+            let showView = req.query.showView,
+            pageSize = parseInt(req.query.pageSize),
+            skip = parseInt((req.query.current - 1) * pageSize),
+            total = await comment.count(),
+            queryJson = req.query.id?{articleId: req.query.id}:{},
+            data = await comment.find(queryJson).sort({ _id: -1 }).limit(pageSize).skip(skip).lean(),
+            showViewArr = [],
+            resultShow = []
             for (let index = 0; index < data.length; index++) {
                 let date = moment(data[index].replyTime).format('YYYY-MM-DD HH:mm')
                 data[index].time = date
