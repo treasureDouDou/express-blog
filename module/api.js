@@ -48,6 +48,7 @@ router.post('/saveArticle', tokenFn, async(req, res) => {
             title: body.title, //标题
             content: body.content, //内容
             initContent: body.initContent, //草稿
+            draft: body.draft,
             abstract: body.abstract //简介
         }
         if (id) { //修改操作
@@ -83,10 +84,15 @@ router.post('/saveArticle', tokenFn, async(req, res) => {
 // 获得文章列表
 router.get('/getArticleList', async(req, res) => {
         try {
-            let pageSize = parseInt(req.query.pageSize)
-            let skip = parseInt((req.query.current - 1) * pageSize)
-            let total = await article.count()
-            let data = await article.find().sort({ date: -1 }).limit(pageSize).skip(skip).lean()
+            let query = {}
+                /* 前端页面获取文章 */
+            if (req.query.draft == 'false') {
+                query = { draft: false }
+            }
+            let pageSize = parseInt(req.query.pageSize),
+                skip = parseInt((req.query.current - 1) * pageSize),
+                total = await article.count(query),
+                data = await article.find(query).sort({ date: -1 }).limit(pageSize).skip(skip).lean();
             for (let index = 0; index < data.length; index++) {
                 let date = moment(data[index].date).format('YYYY-MM-DD HH:mm')
                 data[index].showDate = date
@@ -167,11 +173,12 @@ router.get('/getLabels', async(req, res) => {
     //通过标签查询相应文章
 router.get('/getLabelsSearchArticle', async(req, res) => {
         try {
-            let queryArticle = await articleLabels.find({ label_id: req.query.id })
+            let queryArticle = await articleLabels.find({ label_id: req.query.id})
             let articleData = []
             for (let i = 0; i < queryArticle.length; i++) {
-                let item = queryArticle[i]
-                let query = await article.findOne({ _id: item.article_id }).lean()
+                let item = queryArticle[i],
+                query = await article.findOne({ _id: item.article_id,draft: false }).lean()
+                if(!query) continue;
                 let date = moment(query.date).format('YYYY-MM-DD HH:mm')
                 query.showDate = date
                 articleData.push(query)
@@ -277,13 +284,13 @@ router.post('/comment', async(req, res) => {
 router.get('/getComment', async(req, res) => {
         try {
             let showView = req.query.showView,
-            pageSize = parseInt(req.query.pageSize),
-            skip = parseInt((req.query.current - 1) * pageSize),
-            total = await comment.count(),
-            queryJson = req.query.id?{articleId: req.query.id}:{},
-            data = await comment.find(queryJson).sort({ _id: -1 }).limit(pageSize).skip(skip).lean(),
-            showViewArr = [],
-            resultShow = []
+                pageSize = parseInt(req.query.pageSize),
+                skip = parseInt((req.query.current - 1) * pageSize),
+                total = await comment.count(),
+                queryJson = req.query.id ? { articleId: req.query.id } : {},
+                data = await comment.find(queryJson).sort({ _id: -1 }).limit(pageSize).skip(skip).lean(),
+                showViewArr = [],
+                resultShow = []
             for (let index = 0; index < data.length; index++) {
                 let date = moment(data[index].replyTime).format('YYYY-MM-DD HH:mm')
                 data[index].time = date
